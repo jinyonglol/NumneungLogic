@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Thai Consonants Quiz</title>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --card: #121a2a;
+      --text: #e8eefc;
+      --muted: #a9b7d0;
+      --good: #35d07f;
+      --bad: #ff5b6e;
+      --btn: #1a2540;
+      --border: rgba(255,255,255,.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1000px 600px at 20% 10%, rgba(85,120,255,.18), transparent 60%),
+                  radial-gradient(800px 500px at 80% 20%, rgba(53,208,127,.14), transparent 55%),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+    .wrap { width: 100%; max-width: 520px; }
+    .top {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+    h1 { font-size: 18px; margin: 0; letter-spacing: .2px; }
+    .stats { color: var(--muted); font-size: 13px; }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.35);
+    }
+    .glyph {
+      font-size: 92px;
+      line-height: 1;
+      text-align: center;
+      padding: 18px 0 10px;
+      letter-spacing: 1px;
+      user-select: none;
+    }
+    .hintLine {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      min-height: 18px;
+      margin-bottom: 16px;
+    }
+    .row { display: flex; gap: 10px; }
+    input {
+      flex: 1;
+      background: rgba(0,0,0,.25);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 12px;
+      font-size: 15px;
+      color: var(--text);
+      outline: none;
+    }
+    input:focus { border-color: rgba(85,120,255,.55); }
+    button {
+      background: var(--btn);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform .05s ease, background .2s ease, border-color .2s ease;
+      white-space: nowrap;
+    }
+    button:hover { background: rgba(26,37,64,.9); border-color: rgba(255,255,255,.2); }
+    button:active { transform: translateY(1px); }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .msg {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.18);
+      font-size: 14px;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .msg strong { font-weight: 700; }
+    .good { color: var(--good); }
+    .bad { color: var(--bad); }
+
+    .mini {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 12px;
+      line-height: 1.35;
+    }
+    .kbd {
+      border: 1px solid var(--border);
+      padding: 1px 6px;
+      border-radius: 7px;
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <h1>Thai Consonants Quiz</h1>
+      <div class="stats">
+        Score: <span id="score">0</span> |
+        Streak: <span id="streak">0</span> |
+        Left: <span id="left">0</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="glyph" id="glyph">ก</div>
+      <div class="hintLine" id="hintLine"></div>
+
+      <div class="row">
+        <input id="answer" type="text" placeholder="Type the English name (e.g., ko kai)" autocomplete="off" />
+        <button id="checkBtn">Check</button>
+      </div>
+
+      <div class="actions">
+        <button id="hintBtn">Hint</button>
+        <button id="speakBtn">Speak</button>
+        <button id="skipBtn">Skip</button>
+        <button id="resetBtn">Reset</button>
+      </div>
+
+      <div class="msg" id="msg">
+        <span>Type the consonant name in English, then press <span class="kbd">Enter</span>.</span>
+        <span></span>
+      </div>
+
+      <div class="mini">
+        Tips: answers are flexible. Examples accepted: <em>ko kai</em>, <em>ko-kai</em>, <em>korkai</em>.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Thai consonants (44) with standard English names.
+    // Note: Some consonants are obsolete/rare (ฃ, ฅ) but kept for completeness.
+    const CONSONANTS = [
+      { th: "ก", en: ["ko kai", "koko kai", "korkai"], ipa: "kɔɔ kài" },
+      { th: "ข", en: ["kho khai", "khokhai"], ipa: "kʰɔ̌ɔ kʰài" },
+      { th: "ฃ", en: ["kho khuat", "khokhuat"], ipa: "kʰɔ̌ɔ kʰùat" },
+      { th: "ค", en: ["kho khwai", "khokhwai"], ipa: "kʰɔɔ kʰwāi" },
+      { th: "ฅ", en: ["kho khon", "khokhon"], ipa: "kʰɔɔ kʰon" },
+      { th: "ฆ", en: ["kho rakhang", "khorakhang", "kho ra khang"], ipa: "kʰɔɔ rá-kʰaŋ" },
+      { th: "ง", en: ["ngo ngu", "ngongu"], ipa: "ŋɔɔ ŋuu" },
+      { th: "จ", en: ["cho chan", "chochan"], ipa: "tɕɔɔ tɕan" },
+      { th: "ฉ", en: ["cho ching", "choching"], ipa: "tɕʰɔ̌ɔ tɕʰìŋ" },
+      { th: "ช", en: ["cho chang", "chochang"], ipa: "tɕʰɔɔ tɕʰāŋ" },
+      { th: "ซ", en: ["so so", "soso"], ipa: "sɔɔ sɔɔ" },
+      { th: "ฌ", en: ["cho choe", "chochoe"], ipa: "tɕʰɔɔ tɕʰəə" },
+      { th: "ญ", en: ["yo ying", "yoying"], ipa: "jɔɔ jiŋ" },
+      { th: "ฎ", en: ["do chada", "dochada"], ipa: "dɔɔ tɕʰa-daa" },
+      { th: "ฏ", en: ["to patak", "topatak"], ipa: "tɔɔ pà-tàk" },
+      { th: "ฐ", en: ["tho than", "thothan"], ipa: "tʰɔ̌ɔ tʰǎan" },
+      { th: "ฑ", en: ["tho montho", "thomontho", "tho mon tho"], ipa: "tʰɔɔ mon-tʰɔɔ" },
+      { th: "ฒ", en: ["tho phuthao", "thophuthao", "tho phu thao"], ipa: "tʰɔɔ pʰû-tʰao" },
+      { th: "ณ", en: ["no nen", "nönen", "nonen"], ipa: "nɔɔ nen" },
+      { th: "ด", en: ["do dek", "dodek"], ipa: "dɔɔ dèk" },
+      { th: "ต", en: ["to tao", "totao"], ipa: "tɔɔ tao" },
+      { th: "ถ", en: ["tho thung", "thothung"], ipa: "tʰɔ̌ɔ tʰǔŋ" },
+      { th: "ท", en: ["tho thahan", "thothahan", "tho tha han"], ipa: "tʰɔɔ tʰa-hǎan" },
+      { th: "ธ", en: ["tho thong", "thothong"], ipa: "tʰɔɔ tʰɔɔŋ" },
+      { th: "น", en: ["no nu", "nonu"], ipa: "nɔɔ nuu" },
+      { th: "บ", en: ["bo baimai", "bobaima i", "bo baimai", "bobaimai"], ipa: "bɔɔ bai-māi" },
+      { th: "ป", en: ["po pla", "popla"], ipa: "pɔɔ plaa" },
+      { th: "ผ", en: ["pho phung", "phophung"], ipa: "pʰɔ̌ɔ pʰǔŋ" },
+      { th: "ฝ", en: ["fo fa", "fofa"], ipa: "fɔ̌ɔ faa" },
+      { th: "พ", en: ["pho phan", "phophan"], ipa: "pʰɔɔ pʰaan" },
+      { th: "ฟ", en: ["fo fan", "fofan"], ipa: "fɔɔ fan" },
+      { th: "ภ", en: ["pho samphao", "phosamphao", "pho sam phao"], ipa: "pʰɔɔ sǎm-pʰao" },
+      { th: "ม", en: ["mo ma", "moma"], ipa: "mɔɔ maa" },
+      { th: "ย", en: ["yo yak", "yoyak"], ipa: "jɔɔ ják" },
+      { th: "ร", en: ["ro ruea", "roruea", "ro rua"], ipa: "rɔɔ rʉa" },
+      { th: "ล", en: ["lo ling", "loling"], ipa: "lɔɔ liŋ" },
+      { th: "ว", en: ["wo waen", "wowaen", "wo waen"], ipa: "wɔɔ wɛ̌ɛn" },
+      { th: "ศ", en: ["so sala", "sosala"], ipa: "sɔ̌ɔ sǎa-laa" },
+      { th: "ษ", en: ["so ruesi", "soruesi", "so rusi", "sorusi"], ipa: "sɔ̌ɔ rʉʉ-sǐi" },
+      { th: "ส", en: ["so suea", "sosuea"], ipa: "sɔ̌ɔ sʉ̌a" },
+      { th: "ห", en: ["ho hip", "hohip"], ipa: "hɔ̌ɔ hìp" },
+      { th: "ฬ", en: ["lo chula", "lochula"], ipa: "lɔɔ tɕʰu-laa" },
+      { th: "อ", en: ["o ang", "oang"], ipa: "ʔɔɔ ʔaaŋ" },
+      { th: "ฮ", en: ["ho nokhuk", "honokhuk", "ho nok huk"], ipa: "hɔɔ nók-hûuk" }
+    ];
+
+    // --- helpers ---
+    const $ = (id) => document.getElementById(id);
+
+    function normalize(s) {
+      return (s || "")
+        .toLowerCase()
+        .trim()
+        .replace(/[\u2019']/g, "")     // remove apostrophes
+        .replace(/[-_.]/g, " ")       // hyphen/underscore/dot -> space
+        .replace(/\s+/g, " ");        // collapse spaces
+    }
+
+    function shuffle(array) {
+      const a = array.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    // --- state ---
+    let deck = shuffle(CONSONANTS);
+    let index = 0;
+    let score = 0;
+    let streak = 0;
+    let hintShown = false;
+
+    const glyphEl = $("glyph");
+    const answerEl = $("answer");
+    const msgEl = $("msg");
+    const hintLineEl = $("hintLine");
+    const scoreEl = $("score");
+    const streakEl = $("streak");
+    const leftEl = $("left");
+
+    function currentCard() {
+      return deck[index];
+    }
+
+    function updateStats() {
+      scoreEl.textContent = String(score);
+      streakEl.textContent = String(streak);
+      leftEl.textContent = String(deck.length - index);
+    }
+
+    function setMessage(text, kind = "") {
+      const right = kind === "good" ? `<strong class="good">Correct</strong>` :
+                    kind === "bad"  ? `<strong class="bad">Wrong</strong>` : "";
+      msgEl.innerHTML = `<span>${text}</span><span>${right}</span>`;
+    }
+
+    function showCard() {
+      if (index >= deck.length) {
+        glyphEl.textContent = "🎉";
+        hintLineEl.textContent = "";
+        answerEl.value = "";
+        answerEl.disabled = true;
+        $("checkBtn").disabled = true;
+        $("hintBtn").disabled = true;
+        $("speakBtn").disabled = true;
+        $("skipBtn").disabled = true;
+        setMessage(`Done! Final score: ${score}/${deck.length}. Press Reset to play again.`);
+        updateStats();
+        return;
+      }
+
+      const card = currentCard();
+      glyphEl.textContent = card.th;
+      hintLineEl.textContent = ""; // reset hint line
+      hintShown = false;
+
+      answerEl.value = "";
+      answerEl.disabled = false;
+      $("checkBtn").disabled = false;
+      $("hintBtn").disabled = false;
+      $("speakBtn").disabled = false;
+      $("skipBtn").disabled = false;
+
+      answerEl.focus();
+      setMessage("Type the consonant name in English, then press Enter.");
+      updateStats();
+    }
+
+    function checkAnswer() {
+      if (index >= deck.length) return;
+
+      const card = currentCard();
+      const user = normalize(answerEl.value);
+
+      if (!user) {
+        setMessage("Type something first 🙂");
+        return;
+      }
+
+      const accepted = card.en.map(normalize);
+      const isCorrect = accepted.includes(user);
+
+      if (isCorrect) {
+        score += 1;
+        streak += 1;
+        setMessage(`✅ ${card.th} is "${card.en[0]}".`, "good");
+        index += 1;
+        setTimeout(showCard, 550);
+      } else {
+        streak = 0;
+        setMessage(`❌ Not quite. Try again, or press Hint.`, "bad");
+      }
+
+      updateStats();
+    }
+
+    function showHint() {
+      if (index >= deck.length) return;
+      const card = currentCard();
+
+      if (!hintShown) {
+        // Simple hint: first letter(s) of the English name
+        const main = card.en[0];
+        const parts = main.split(" ");
+        const hint = parts.map(p => p.slice(0, Math.min(2, p.length)) + "…").join(" ");
+        hintLineEl.textContent = `Hint: starts like "${hint}"`;
+        hintShown = true;
+      } else {
+        // Second hint: show full answer
+        hintLineEl.textContent = `Answer: ${card.en[0]} (approx. ${card.ipa})`;
+      }
+    }
+
+    function skipCard() {
+      if (index >= deck.length) return;
+      const card = currentCard();
+      streak = 0;
+      setMessage(`Skipped. It was "${card.en[0]}".`);
+      index += 1;
+      updateStats();
+      setTimeout(showCard, 450);
+    }
+
+    function resetGame() {
+      deck = shuffle(CONSONANTS);
+      index = 0;
+      score = 0;
+      streak = 0;
+      hintShown = false;
+      answerEl.disabled = false;
+      showCard();
+    }
+
+    function speakThai() {
+      if (index >= deck.length) return;
+      const card = currentCard();
+
+      // Use Web Speech API if available
+      if (!("speechSynthesis" in window)) {
+        setMessage("Speech is not supported in this browser.");
+        return;
+      }
+
+      const u = new SpeechSynthesisUtterance(card.th);
+      // Try Thai voice if available; if not, browser will fallback.
+      u.lang = "th-TH";
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+      setMessage(`Speaking: ${card.th}`);
+    }
+
+    // --- events ---
+    $("checkBtn").addEventListener("click", checkAnswer);
+    $("hintBtn").addEventListener("click", showHint);
+    $("skipBtn").addEventListener("click", skipCard);
+    $("resetBtn").addEventListener("click", resetGame);
+    $("speakBtn").addEventListener("click", speakThai);
+
+    answerEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") checkAnswer();
+      if (e.key === "Escape") skipCard();
+    });
+
+    // start
+    resetGame();
+  </script>
+</body>
+</html>
