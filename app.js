@@ -1,6 +1,4 @@
-const BACKEND_URL = "https://YOURSITE-service.onrender.com";
-// 로컬 테스트할 땐:
-// const BACKEND_URL = "http://127.0.0.1:8000";
+const BACKEND_URL = "https://numneunglogic-service.onrender.com";
 
 const THAI_CONSONANTS = [
   { char: "ก", name: "ko kai", tone: "Middle" },
