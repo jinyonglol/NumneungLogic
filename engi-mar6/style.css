@@ -1,0 +1,187 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+}
+
+.card {
+  width: 100%;
+  max-width: 720px;
+  background: white;
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.hidden {
+  display: none;
+}
+
+h1, h2 {
+  margin: 0 0 12px;
+  text-align: center;
+}
+
+.subtitle {
+  text-align: center;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+#nickname-input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 18px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.primary-btn,
+.secondary-btn,
+.choice-btn {
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: 0.15s ease;
+}
+
+.primary-btn {
+  width: 100%;
+  padding: 14px 16px;
+  background: #1677ff;
+  color: white;
+}
+
+.primary-btn:hover {
+  opacity: 0.92;
+}
+
+.secondary-btn {
+  padding: 12px 18px;
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.secondary-btn:hover {
+  background: #dbe1e8;
+}
+
+.error-text {
+  color: #dc2626;
+  margin-top: 12px;
+  text-align: center;
+  min-height: 20px;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.player-line {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.meta-line {
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.quiz-stats {
+  text-align: right;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.thai-char {
+  text-align: center;
+  font-size: 120px;
+  margin: 24px 0 28px;
+  line-height: 1;
+}
+
+.choices {
+  display: grid;
+  gap: 14px;
+}
+
+.choice-btn {
+  width: 100%;
+  padding: 18px 16px;
+  background: #e5e7eb;
+  color: #111827;
+  text-align: center;
+  font-size: 28px;
+}
+
+.choice-btn:hover:not(:disabled) {
+  background: #d1d5db;
+}
+
+.choice-btn:disabled {
+  cursor: default;
+}
+
+.choice-btn.correct {
+  background: #bbf7d0;
+}
+
+.choice-btn.wrong {
+  background: #fecaca;
+}
+
+.feedback {
+  min-height: 28px;
+  margin-top: 18px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: 20px;
+  }
+
+  .thai-char {
+    font-size: 88px;
+  }
+
+  .choice-btn {
+    font-size: 22px;
+  }
+
+  .top-bar {
+    flex-direction: column;
+  }
+
+  .quiz-stats {
+    text-align: left;
+  }
+}
